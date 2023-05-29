@@ -1,0 +1,93 @@
+#include<iostream>
+#include<string>
+#include<fstream>
+#include<conio.h>
+
+using namespace std;
+
+bool areEqual(char pass[], char password[]){
+	int count = 0;
+	for(int i=0 ; i<8 ; i++){
+		if(pass[i] == password[i]){
+			count++;
+		}
+	}
+	return count==8;
+}
+
+string encrypt(string &s){
+	for(int i=0 ; i<s.size() ; i++){
+		s[i] = s[i]+97;
+	}
+	return s;
+}
+
+string decrypt(string &enc){
+	for(int i=0 ; i<enc.size() ; i++){
+		enc[i] = enc[i]-97;
+	}
+	return enc;
+}
+
+int main(){
+	char password[8] = {0};
+	char pass[8] = {0};
+	string s;
+	cout << "Enter a string to encrypt" << endl;
+	getline(cin, s);
+	string enc = encrypt(s);
+	cout << "The encrypted string is : " << enc << endl;
+	
+	cout << "Create a password for the string" << endl;
+	for(int i=0 ; i<8 ; ){
+		password[i] = _getch();
+		if(password[i] == '\b'){
+			continue;
+		}
+		else{
+			_putch('*');
+			i++;
+		}
+	}
+	
+	fstream myfile;
+	myfile.open("PasswordKeeper.txt", ios::in | ios::out);
+	myfile.seekg(0, ios::end);
+	myfile<<endl;
+	for(int i=0 ; i<8 ; i++){
+		myfile <<password[i];
+	}
+	myfile.close();
+	
+	cout << endl;
+	cout << "Do you wish to access the string?" << endl;
+	string response;
+	cin >> response;
+	if(response == "yes"){
+		cout << "Enter password : ";
+		for(int i=0 ; i<8 ; ){
+			pass[i] = _getch();
+			if(pass[i] == '\b'){
+				continue;
+			}
+			else{
+				_putch('*');
+				i++;
+			}
+		}
+		cout<<endl;
+		if(areEqual(pass, password)){
+			cout << "Login Verified" << endl;
+			string dec = decrypt(enc);
+			cout << "The encrypted string is : " << dec << endl;
+		}
+		else{
+			cout << endl;
+			cout << "Login Failed !";
+			return -1;
+		}
+	}
+	else{
+		cout << "Thank You";
+	}
+}
